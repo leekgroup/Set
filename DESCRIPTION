@@ -1,0 +1,10 @@
+Package: Set
+Title: Decision-theoretic approach to gene-set analysis
+Version: 0.99.0
+Date: 2010-02-25
+Author: Simina, Hector, Jeff, Giovanni
+Maintainer: Simina <sboca@jhsph.edu>
+Description: More about what it does (maybe more than one line)
+Depends: R (>= 2.10.0), Biobase, mgcv
+License: GPL version 2 or newer
+

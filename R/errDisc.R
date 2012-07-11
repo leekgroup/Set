@@ -1,0 +1,68 @@
+errDisc <-
+    function(atoms,
+             post.prob.genes)
+{
+  ##if the atom list has no names, add them
+  if(length(names(atoms)) == 0)
+    {
+      names(atoms) <- 1:length(atoms)
+    }
+
+  ##if the list of posterior probabilities has no names, add them
+  if(length(names(post.prob.genes)) == 0)
+    {
+      names(post.prob.genes) <- 1:length(post.prob.genes)
+    }
+  
+  ##get number of atoms
+  nr.atoms <- length(atoms)
+  
+  ##get all the genes in these atoms
+  genes <- unique(unlist(atoms))
+  
+      ##get the number of genes
+  nr.genes <- length(genes)
+  
+  ##if the genes are numeric, transform them to characters
+  genes <- as.character(genes)
+  
+  ##only consider the genes among those in the atoms with posterior probs
+  post.prob.genes <- post.prob.genes[genes]
+  ##remove all the NAs (corresponding to genes in atoms but not in dataset)
+  post.prob.genes <- post.prob.genes[!is.na(post.prob.genes)]
+  
+  ##transform all the genes to chars in case they're numeric
+  atoms <- lapply(atoms, as.character)
+  ##get rid of genes which are in atoms but not in dataset
+  atoms <- lapply(atoms, intersect, names(post.prob.genes))
+  
+  ##initialize matrix which gets returned
+  mat <- matrix(0, nrow = length(atoms), ncol = 4)
+  rownames(mat) <- names(atoms)
+  colnames(mat) <- c("EFD", "EMD", "EFDR", "EMDR")
+  
+  ##get atom sizes
+  atom.sizes <- sapply(atoms, length)
+  
+  ##get sum of posterior probs of genes in each atom
+  sum.genes.in.atom <-
+    sapply(atoms, function(genes.in.atom,
+                           post.prob.genes) {
+      return(sum(post.prob.genes[genes.in.atom]))},
+           post.prob.genes)
+  
+  ##get EMD
+  ##this is the sum of the posterior probabilities of the genes
+  ##outside the atom
+  mat[, "EMD"] <- sum(post.prob.genes) - sum.genes.in.atom
+  
+  ##get EFD
+  mat[,"EFD"] <- atom.sizes - sum.genes.in.atom
+  
+  ##get EMDR and EFDR
+  mat[,"EMDR"] <- mat[,"EMD"]/(nr.genes-atom.sizes)
+  mat[,"EFDR"] <- mat[,"EFD"]/atom.sizes
+  
+  mat
+}
+

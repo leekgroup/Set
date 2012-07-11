@@ -1,0 +1,53 @@
+\name{enumAtoms}
+\alias{enumAtoms}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+  Enumerates atoms resulting from all the possible intersections and set
+  differences of existing sets.
+}
+\description{
+  Function inputs a list of sets or a binary matrix representing gene
+  membership in sets and outputs a list of atoms resulting from all the
+  possible intersections and set
+  differences of existing sets.
+}
+\usage{
+enumAtoms(S, rows.sets = FALSE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{S}{
+    List of sets or a binary matrix representing gene
+    membership in sets.
+  }
+  \item{rows.sets}{
+    If \code{TRUE} and \code{S} is a matrix, then the rows of \code{S}
+    represent the sets and the columns represent the sets.
+    If \code{FALSE} and \code{S} is a matrix,
+    then the rows of \code{S}
+    represent the genes and the columns represent the sets.
+  }
+}
+\value{
+  List of atoms created by taking all possible intersections and set
+  differences of existing sets.
+}
+\references{
+  Boca S.M., H. Corrada Bravo, B. Caffo, J.T. Leek, and G. Parmigiani (2010):
+  A decision-theory approach to interpretable set analysis for
+  high-dimensional
+  data. \emph{JHU Biostat Working Paper 211}
+  \url{http://www.bepress.com/jhubiostat/paper211/}
+}
+\author{
+  Jeffrey T. Leek
+}
+\examples{
+set1 <- 1:50
+set2 <- 31:130
+set3 <- 131:180
+set4 <- 161:260
+sets <- list(set1, set2, set3, set4)
+atoms.list <- enumAtoms(sets)
+}
+
