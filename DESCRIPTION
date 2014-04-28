@@ -1,10 +1,11 @@
 Package: Set
 Title: Decision-theoretic approach to gene-set analysis
 Version: 0.99.0
-Date: 2010-02-25
-Author: Simina, Hector, Jeff, Giovanni
-Maintainer: Simina <sboca@jhsph.edu>
-Description: More about what it does (maybe more than one line)
+Author: Simina M. Boca, Hector Corrada Bravo, Giovanni Parmigiani, Jeffrey T. Leek
+Maintainer: Simina M. Boca <sboca1@jhu.edu>
+Description: This package implements a decision-theoretic approach to gene-set analysis,
+considering a number of different loss functions introduced in the companion Boca et al.
+(2013) Biometrics paper.
 Depends: R (>= 2.10.0), Biobase, mgcv
 License: GPL version 2 or newer
 
