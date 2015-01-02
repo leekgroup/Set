@@ -1,1 +1,8 @@
-This is the Set R package, now on github!
+This is the Set R package, implementing the methods developed in the paper:
+"A Decision-Theory Approach to Interpretable Set Analysis for High-Dimensional Data"
+by SM Boca, H Corrada Bravo, B Caffo, JT Leek, G Parmigiani
+Biometrics, 2013, 69(3):614-623.
+http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3927844/
+http://onlinelibrary.wiley.com/doi/10.1111/biom.12060/full
+
+
