@@ -28,21 +28,22 @@
 \setlength{\emergencystretch}{2em}
 \usepackage{Sweave}
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \title{\Rpackage{Set} package}
 \author{Simina M. Boca \\
-  Johns Hopkins Bloomberg School of Public Health \\
-  email: \texttt{sboca@jhsph.edu}, \\ \\
+  Georgetown University Medical Center \\
+  email: \texttt{smb310@georgetown.edu}, \\ \\
   Hector Corrada Bravo \\
   University of Maryland, College Park \\
   email: \texttt{hcorrada@umiacs.umd.edu}, \\ \\
-  Jeffrey T. Leek \\
-  Johns Hopkins Bloomberg School of Public Health \\
-  email: \texttt{jleek@jhsph.edu}, \\ \\  
   Giovanni Parmigiani \\
   Dana-Farber Cancer Institute and \\
   Harvard School of Public Health \\ 
-  email: \texttt{gp@jimmy.harvard.edu}
+  email: \texttt{gp@jimmy.harvard.edu}, \\ \\
+  Jeffrey T. Leek \\
+  Johns Hopkins Bloomberg School of Public Health \\
+  email: \texttt{jleek@jhsph.edu}
 }
 
 \maketitle
@@ -85,8 +86,8 @@ ratio of false discoveries (EFDR), and the posterior expected ratio of missed
 discoveries (EMDR).
 \par
 This vignette represents an introduction to the \texttt{Set} package.
-Four functions are available, \texttt{postProb}, \texttt{errDisc}, \texttt{bayesEst},
-and \texttt{enumAtoms}. A real data example is also available, taken from
+Five functions are available, \texttt{postProb}, \texttt{errDisc}, \texttt{bayesEst},
+\texttt{enumAtoms}, and \texttt{atomizeSets}. A real data example is also available, taken from
 \cite{SubramanianEtAl2005}.
 
 \section{Real data example}
@@ -144,7 +145,8 @@ head(post.prob.genes)
 We now obtain estimates of the following quantities: the posterior
 expected number of false discoveries (EFD), the posterior expected
 number of missed discoveries (EMD), the posterior expected fraction of
-false discoveries (EFDR), and the posterior expected fraction of missed discoveries (EMDR) for each atom. The result is a matrix.
+false discoveries (EFDR), and the posterior expected fraction of missed discoveries (EMDR) for each atom. The result is a matrix. The atomic false discovery rate (afdr) is defined as the posterior expected fraction of false 
+discoveries in that atom.
 
 <<calcEFD.EMD>>=
 EFD.EMD.res <- errDisc(sets,
@@ -154,7 +156,7 @@ head(EFD.EMD.res)
 @
 
 \section{The \Rfunction{bayesEst} function}
-In the case of the loss function used throughout the majority of \cite{BocaEtAl2011}, $L$, it is easy to find the Bayes estimator, by just seeing which atoms have the EFDR below the desired threshold $w$. Alternatively, the \texttt{BayesEst} function can be used. We try for the values $w=0.75$ and $w=0.97$.
+In the case of the loss function used throughout the majority of \cite{BocaEtAl2011}, $L$, it is easy to find the Bayes estimator, by just seeing which atoms have the EFDR below the desired threshold $w$. Alternatively, the \texttt{BayesEst} function can be used. We try this for the values $w=0.75$ and $w=0.97$.
 
 <<getBayesEst>>=
 bayesEst(EFD.EMD.res,
@@ -212,16 +214,54 @@ In the example above, the sets considered are not overlapping. In the case of ov
 <<enumAtoms>>=
 set1 <- 1:50
 set2 <- 31:130
-set3 <- 131:180
-set4 <- 161:260
+set3 <- 131:160
+set4 <- c(40:50, 161:260)
 
 sets <- list(set1, set2, set3, set4)
+names(sets) <- c("A","B","C","D")
 
 atoms.list <- enumAtoms(sets)
 
 length(atoms.list)
 
-sapply(atoms.list, length)
+atoms.list
+@
+
+\section{The \Rfunction{atomizeSets} function}
+The atoms obtained from overlapping sets can be visualized via a type of mosaic plot, using the \texttt{atomizeSets} function. By default, the sets are shown in red, with the atoms being divided by white lines, in a manner proportional to ther size:
+<<atomizeExample, fig=TRUE, include=TRUE>>=
+atomizeSets(sets)
+@
+
+For example, set A is divided between 3 atoms. Their identities can be inferred immediately by looking across the columns: one atom is shared between sets A, B, and D; one atom is shared between sets A and B; one atom is a subset of set A only. Set C however does not overlap any other sets.
+
+The default set colors and background colors can be chosen by the user:
+<<atomizeExampleChangeCol, fig=TRUE, include=TRUE>>=
+atomizeSets(sets, col="blue", bgCol="white")
+@
+
+There is also an option for ordering the atoms by size:
+<<atomizeExampleOrderSize, fig=TRUE, include=TRUE>>=
+atomizeSets(sets, col="blue", bgCol="white", orderBy="size")
+@
+
+Finally, each feature may be assigned a non-negative value (or weight) and the atoms can be ordered by the average of the values for their corresponding features. These values may be, for example, the posterior probabilities of the features truly being from the null distribution, in which case their mean value is equal to the afdr. If non-negative values are used for each feature, then only part of the rectangle corresponding to each atom is shaded in the non-background color, proportional to the mean value of the features within that atom:
+<<featureWeights, fig=TRUE, include=TRUE>>=
+set.seed(380148)
+weights <- rbeta(n=length(unlist(atoms.list)), shape1=0.5, shape2=0.5)
+
+atomizeSets(sets, values=weights, col="blue")
+@
+
+If these values are the posterior probabilities of the features being truly null, the afdr for each atom is:
+<<afdrCompare>>=
+errDisc(atoms.list, 1-weights)[,"EFDR"]
+@
+Thus, the widths of the rectangles are proportional to these values.
+
+The atoms may be ordered by the mean values assigned to their features:
+<<orderMean, fig=TRUE, include=TRUE>>=
+atomizeSets(sets, values=weights, col="blue", orderBy="mean")
 @
 
 \bibliographystyle{plain}

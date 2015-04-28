@@ -1,1 +1,1 @@
-export(postProb, errDisc, bayesEst, enumAtoms)
+export(atomizeSets, bayesEst, enumAtoms, errDisc, postProb)
